@@ -1,0 +1,7 @@
+.table {
+  display: flex;
+  margin: auto;
+  max-width: 1000px;
+  background-color: #f5f5f5;
+  font-size: 20px;
+}
