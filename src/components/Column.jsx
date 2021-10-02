@@ -1,12 +1,15 @@
 import './style/Column.css';
-import { useState } from 'react';
 
 function Column(props) {
-  //   const [rows, setRows] = useState(props.rows);
+  const rows = props.rows ? props.rows : [];
+  const title = props.title;
 
   return (
-    <div className="column" style={props.style}>
-      {props.rows.map((row, indx) => (
+    <div className="column">
+      <div className="row">
+        <span>{title}</span>
+      </div>
+      {rows.map((row, indx) => (
         <div className="row" key={indx}>
           <span>{row}</span>
         </div>
