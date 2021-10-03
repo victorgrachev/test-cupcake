@@ -1,57 +1,77 @@
 import './App.css';
 import Table from './components/Table';
-import { fetchCurPair } from './utils/utils.js';
+import { fetchCurInfo, getCurPairs } from './utils/utils.js';
 import { useState, useEffect } from 'react';
 
 function App() {
-  const [first, setFirst] = useState();
-  const [second, setSecond] = useState();
-  const [third, setThird] = useState();
+  const [firstMarket, setFirstMarket] = useState();
+  const [secondMarket, setSecondMarket] = useState();
+  const [thirdMarket, setThirdMarket] = useState();
 
-  const colums = {
+  const column = {
     'Pair name/market': [
-      'RUB/CUPCAKE',
-      'USD/CUPCAKE',
-      'EUR/CUPCAKE',
-      'RUB/USD',
-      'RUB/EUR',
-      'EUR/USD',
+      { value: 'RUB/CUPCAKE' },
+      { value: 'USD/CUPCAKE' },
+      { value: 'EUR/CUPCAKE' },
+      { value: 'RUB/USD' },
+      { value: 'RUB/EUR' },
+      { value: 'EUR/USD' },
     ],
-    First: first,
-    Second: second,
-    Third: third,
-  };
-
-  const load = async (url) => {
-    Promise.all([
-      fetchCurPair(`first${url ? '/' + url : ''}`, colums['Pair name/market']),
-      fetchCurPair(`second${url ? '/' + url : ''}`, colums['Pair name/market']),
-      fetchCurPair(`third${url ? '/' + url : ''}`, colums['Pair name/market']),
-    ]).then((res) => {
-      res.forEach((r, indx) => {
-        if (indx === 0) {
-          setFirst(r);
-        } else if (indx === 1) {
-          setSecond(r);
-        } else if (indx === 2) {
-          setThird(r);
-        }
-      });
-    });
+    First: firstMarket,
+    Second: secondMarket,
+    Third: thirdMarket,
   };
 
   useEffect(() => {
-    let interval;
-    load().then(() => {
-      setInterval(() => load('poll'));
+    const loadMarketInfo = async (url, funcUpdateStateMarket) => {
+      try {
+        const response = await fetchCurInfo(url, false);
+        const message = await response.json();
+        const curPairs = getCurPairs(
+          message.base,
+          message.rates,
+          column['Pair name/market']
+        );
+        funcUpdateStateMarket(curPairs);
+      } catch {}
+    };
+
+    const loadMarketInfoLongPoll = async (url, funcUpdateStateMarket) => {
+      try {
+        const response = await fetchCurInfo(url, true);
+
+        if (response.status === 502) {
+          await loadMarketInfoLongPoll(url, funcUpdateStateMarket);
+        } else if (response.status !== 200) {
+          await new Promise((resolve) => setTimeout(resolve, 1000));
+          await loadMarketInfoLongPoll(url, funcUpdateStateMarket);
+        } else {
+          const message = await response.json();
+          const curPairs = getCurPairs(
+            message.base,
+            message.rates,
+            column['Pair name/market']
+          );
+          funcUpdateStateMarket(curPairs);
+          await loadMarketInfoLongPoll(url, funcUpdateStateMarket);
+        }
+      } catch {}
+    };
+    Promise.all([
+      loadMarketInfo('first', setFirstMarket),
+      loadMarketInfo('second', setSecondMarket),
+      loadMarketInfo('third', setThirdMarket),
+    ]).then(() => {
+      loadMarketInfoLongPoll('first', setFirstMarket);
+      loadMarketInfoLongPoll('second', setSecondMarket);
+      loadMarketInfoLongPoll('third', setThirdMarket);
     });
-    return () => clearInterval(interval);
   }, []);
 
   return (
     <div className="container">
       <h1>Value of currency pairs</h1>
-      <Table colums={colums} />
+      <Table column={column} />
     </div>
   );
 }
