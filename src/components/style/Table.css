@@ -1,0 +1,11 @@
+.table {
+  display: flex;
+  margin: 20px auto;
+  max-width: 1000px;
+  background-color: #f5f5f5;
+  font-size: 20px;
+}
+
+.table > div:nth-child(1) {
+  text-align: center;
+}
