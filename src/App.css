@@ -1,13 +1,16 @@
-@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans+Condensed:wght@300&display=swap');
 
 * {
   padding: 0;
   margin: 0;
-  font-family: 'Roboto', sans-serif;
+  font-family: 'Open Sans Condensed', sans-serif;
 }
 
 .container {
   padding: 100px;
+  height: 100vh;
+  box-sizing: border-box;
+  background-color: #bdbdbd;
 }
 
 .container > h1 {
