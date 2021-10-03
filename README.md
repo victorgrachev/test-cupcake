@@ -10,12 +10,12 @@ https://bitbucket.org/cupcakedev/cupcake-frontend-test-task/src/master/
 
 После выполнения команд приложение будет доступно по адресу: http://localhost:3000/
 
-Installation
-$ npm install
+# Installation
+npm install
 
-Running the app
+# Running the app
 #build
 npm run build
 
-# development
+#development
 npm start
