@@ -14,8 +14,8 @@ https://bitbucket.org/cupcakedev/cupcake-frontend-test-task/src/master/
 npm install
 
 # Running the app
-#build
-npm run build
+#build <br> 
+npm run build <br>
 
-#development
-npm start
+#development <br>
+npm start <br>
